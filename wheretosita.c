@@ -61,26 +61,37 @@ void generate_arrangements(int position) {
     }
 }
 
+// Main function with command-line argument handling for input file
 int main(int argc, char *argv[]) {
+    // Check if the input filename is provided as a command-line argument
     if (argc < 2) {
+        // If not, print usage information and exit with an error code
         fprintf(stderr, "Usage: %s <inputfile>\n", argv[0]);
         return 1;
     }
 
+    // Attempt to open the specified file for reading
     FILE *fp = fopen(argv[1], "r");
+    // Check if the file was successfully opened
     if (fp == NULL) {
+        // If the file cannot be opened, print an error message and exit with an error code
         fprintf(stderr, "Error: Cannot open file %s\n", argv[1]);
         return 1;
     }
 
+    // Read the total number of people and pairs of seating restrictions from the file
     fscanf(fp, "%d %d", &total_people, &pairs);
+    // Loop through each person to read their name and popcorn status
     for (int i = 0; i < total_people; i++) {
         fscanf(fp, "%s %d", person_names[i], &popcorn_status[i]);
     }
+    // Loop through each pair to read the names and set the seating restrictions
     for (int i = 0; i < pairs; i++) {
         char person1[20], person2[20];
         int index1 = -1, index2 = -1;
+        
         fscanf(fp, "%s %s", person1, person2);
+        // Find the indexes of these people in the person_names array
         for (int j = 0; j < total_people; j++) {
             if (strcmp(person1, person_names[j]) == 0) {
                 index1 = j;
@@ -89,15 +100,20 @@ int main(int argc, char *argv[]) {
                 index2 = j;
             }
         }
+        // Set the seating restriction for both directions (person1 can't sit next to person2 and vice versa)
         seating_restrictions[index1][index2] = true;
         seating_restrictions[index2][index1] = true;
     }
 
+    
     fclose(fp);
 
+  
     generate_arrangements(0);
 
+    // Print the total count of valid seating arrangements
     printf("%d\n", arrangement_count);
 
+    
     return 0;
 }

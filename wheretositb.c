@@ -69,25 +69,34 @@ void generate_arrangements(int position) {
 }
 
 int main(int argc, char *argv[]) {
+    // Check if the program was run with at least one command-line argument (the input file name)
     if (argc < 2) {
+        // If not, print an error message with the correct usage format and exit with an error status
         fprintf(stderr, "Usage: %s <inputfile>\n", argv[0]);
         return 1;
     }
 
+    // Attempt to open the specified file for reading
     FILE *fp = fopen(argv[1], "r");
+    // If the file could not be opened (e.g., it doesn't exist), print an error and exit
     if (fp == NULL) {
         fprintf(stderr, "Error: Cannot open file %s\n", argv[1]);
         return 1;
     }
 
+    // Read the first two integers from the file: total number of people and restriction count
     fscanf(fp, "%d %d", &total_people, &restriction_count);
+    // Loop through each person to read their name and popcorn status from the file
     for (int i = 0; i < total_people; i++) {
         fscanf(fp, "%s %d", person_names[i], &popcorn_status[i]);
     }
+    // Loop through each pair of people who cannot sit together and update the seating_restrictions array
     for (int i = 0; i < restriction_count; i++) {
         char person1[20], person2[20];
         int index1, index2;
+        // Read the names of the people in the pair
         fscanf(fp, "%s %s", person1, person2);
+        // Find the indices of these people in the person_names array
         for (int j = 0; j < total_people; j++) {
             if (strcmp(person1, person_names[j]) == 0) {
                 index1 = j;
@@ -96,13 +105,17 @@ int main(int argc, char *argv[]) {
                 index2 = j;
             }
         }
+        // Set the seating restriction for both directions (person1 can't sit next to person2 and vice versa)
         seating_restrictions[index1][index2] = true;
         seating_restrictions[index2][index1] = true;
     }
 
+   
     fclose(fp);
 
+    
     generate_arrangements(0);
 
+    
     return 0;
 }
